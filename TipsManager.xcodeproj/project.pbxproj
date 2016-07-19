@@ -77,7 +77,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 166D843C1CFF0E5000F5576A /* Build configuration list for PBXNativeTarget "TipsManager" */;
 			buildPhases = (
-				16DDA06B1CFF1045000CE348 /* Carthage */,
 				166D842F1CFF0E5000F5576A /* Sources */,
 				166D84301CFF0E5000F5576A /* Frameworks */,
 				166D84311CFF0E5000F5576A /* Headers */,
@@ -132,24 +131,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		16DDA06B1CFF1045000CE348 /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/MBProgressHUD.framework",
-			);
-			name = Carthage;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		166D842F1CFF0E5000F5576A /* Sources */ = {
