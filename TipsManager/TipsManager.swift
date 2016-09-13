@@ -18,7 +18,7 @@ public enum PromotType: String {
 
 final public class TipsManager {
 
-	private static var _shared: TipsManager? = nil
+	fileprivate static var _shared: TipsManager? = nil
 	public var language = "zh-Hans"
 	public static var shared: TipsManager {
 		if _shared == nil {
@@ -28,12 +28,12 @@ final public class TipsManager {
 	}
 
 	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+		NotificationCenter.default.removeObserver(self)
 	}
 
-	private init() {
-		let center = NSNotificationCenter.defaultCenter()
-		center.addObserverForName(UIApplicationDidReceiveMemoryWarningNotification, object: nil, queue: nil) { [weak self](_) in
+	fileprivate init() {
+		let center = NotificationCenter.default
+		center.addObserver(forName: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil, queue: nil) { [weak self](_) in
 			guard let sself = self else { return }
 			if !sself.isShowing && sself.tipsQueue.count == 0 {
 				TipsManager._shared = nil
@@ -41,13 +41,13 @@ final public class TipsManager {
 		}
 	}
 	/// 提示队列
-	private var tipsQueue: [(tip: String, image: String, y: Float)]! = {
+	fileprivate var tipsQueue: [(tip: String, image: String, y: Float)]! = {
 		let q = [(tip: String, image: String, y: Float)]()
 		return q
 	}()
 
 	/// 是否正在展示提示语
-	private var isShowing = false {
+	fileprivate var isShowing = false {
 		didSet {
 			if !isShowing {
 				if let (tips, img, yoffset) = tipsQueue.first {
@@ -59,39 +59,43 @@ final public class TipsManager {
 		}
 	}
 
-	public class func hideHUDFor(view: UIView, animated: Bool = true) {
-		MBProgressHUD.hideHUDForView(view, animated: animated)
+	public class func hideHUDFor(_ view: UIView, animated: Bool = true) {
+		MBProgressHUD.hide(for: view, animated: animated)
 	}
 	// MARK: 弹出提示语
 
-	public class func showBlockTips(tips: String, _ imageName: String = "") -> MBProgressHUD? {
+	public class func showBlockTips(_ tips: String, _ imageName: String = "") -> MBProgressHUD? {
 		return shared.showBlockTips(tips, imageName)
 	}
 
-	public func showBlockTips(tips: String, _ imageName: String = "") -> MBProgressHUD? {
+	public func showBlockTips(_ tips: String, _ imageName: String = "") -> MBProgressHUD? {
 		return blockShow(tips, imageName)
 	}
 
-	private func blockShow(tips: String, _ imageName: String = "") -> MBProgressHUD? {
-		if let win = UIApplication.sharedApplication().keyWindow {
+	fileprivate func blockShow(_ tips: String, _ imageName: String = "") -> MBProgressHUD? {
+		if let win = UIApplication.shared.keyWindow {
 
 			func show() -> MBProgressHUD {
-				let hud = MBProgressHUD.showHUDAddedTo(win, animated: true)
-				hud.mode = MBProgressHUDMode.Text
+                var hud: MBProgressHUD! = MBProgressHUD.showAdded(to: win, animated: true)
+                if hud == nil {
+                    hud = MBProgressHUD()
+                    win.addSubview(hud)
+                }
+				hud.mode = MBProgressHUDMode.text
 				hud.labelText = tips.tk_i18n
 				if imageName != "" {
 					hud.customView = UIImageView(image: UIImage(named: imageName))
-					hud.mode = MBProgressHUDMode.CustomView
+					hud.mode = MBProgressHUDMode.customView
 				}
 				hud.show(true)
 				return hud
 			}
 
-			if NSThread.isMainThread() {
+			if Thread.isMainThread {
 				return show()
 			} else {
 				var hud: MBProgressHUD!
-				dispatch_async(dispatch_get_main_queue(), { () -> Void in
+				DispatchQueue.main.async(execute: { () -> Void in
 					hud = show()
 				})
 				return hud
@@ -102,11 +106,11 @@ final public class TipsManager {
 
 	// MARK: 弹出提示语
 
-	public class func showTips(tips: String, _ imageName: String = "") {
+	public class func showTips(_ tips: String, _ imageName: String = "") {
 		shared.showTips(tips, imageName)
 	}
 
-	public func showTips(tips: String, _ imageName: String = "") {
+	public func showTips(_ tips: String, _ imageName: String = "") {
 
 		if isShowing {
 			tipsQueue.append((tips, imageName, 0))
@@ -120,40 +124,40 @@ final public class TipsManager {
 		}
 	}
 
-	public class func showErrorTips(tips: String) {
+	public class func showErrorTips(_ tips: String) {
 		shared.showErrorTips(tips)
 	}
 
-	public func showErrorTips(tips: String) {
+	public func showErrorTips(_ tips: String) {
 		let type = PromotType.Error
 		showTipsWith(tips, type)
 	}
 
-	public class func showSuccessTips(tips: String = "success") {
+	public class func showSuccessTips(_ tips: String = "success") {
 		shared.showSuccessTips(tips)
 	}
 
-	public func showSuccessTips(tips: String = "success") {
+	public func showSuccessTips(_ tips: String = "success") {
 		let type = PromotType.Success
 		showTipsWith(tips, type)
 	}
 
-	public class func showWarningTips(tips: String) {
+	public class func showWarningTips(_ tips: String) {
 		shared.showWarningTips(tips)
 	}
 
-	public func showWarningTips(tips: String) {
+	public func showWarningTips(_ tips: String) {
 		let type = PromotType.Warning
 		showTipsWith(tips, type)
 	}
 
-	public class func showBottomTipsWith(tips: String, _ type: PromotType = .None) {
+	public class func showBottomTipsWith(_ tips: String, _ type: PromotType = .None) {
 		shared.showBottomTipsWith(tips, type)
 	}
 
-	public func showBottomTipsWith(tips: String, _ type: PromotType = .None) {
+	public func showBottomTipsWith(_ tips: String, _ type: PromotType = .None) {
 
-		let mainScreenHeight = UIScreen.mainScreen().bounds.height
+		let mainScreenHeight = UIScreen.main.bounds.height
 		if isShowing {
 			addTipsToQueue((tips, type.rawValue, Float(mainScreenHeight / 2)))
 			return
@@ -164,7 +168,7 @@ final public class TipsManager {
 		}
 	}
 
-	private func showTipsWith(tips: String, _ type: PromotType) {
+	fileprivate func showTipsWith(_ tips: String, _ type: PromotType) {
 
 		if isShowing {
 			addTipsToQueue((tips, type.rawValue, 0))
@@ -176,51 +180,55 @@ final public class TipsManager {
 		}
 	}
 
-	private func realShow(tips: String, _ imageName: String = "", _ offsetY: Float = 0) {
-		guard let win = UIApplication.sharedApplication().keyWindow else { return }
+	fileprivate func realShow(_ tips: String, _ imageName: String = "", _ offsetY: Float = 0) {
+		guard let win = UIApplication.shared.keyWindow else { return }
 		func show() {
-			MBProgressHUD.hideAllHUDsForView(win, animated: true)
-			let hud: MBProgressHUD! = MBProgressHUD.showHUDAddedTo(win, animated: true)
-			hud.mode = MBProgressHUDMode.Text
+			MBProgressHUD.hideAllHUDs(for: win, animated: true)
+			var hud: MBProgressHUD! = MBProgressHUD.showAdded(to: win, animated: true)
+            if hud == nil {
+                hud = MBProgressHUD()
+                win.addSubview(hud)
+            }
+			hud.mode = MBProgressHUDMode.text
 			hud.detailsLabelText = tips.tk_i18n
 			hud.yOffset = offsetY == 0 ? 0 : (offsetY - 40)
 			if imageName != "" {
 				hud.customView = UIImageView(image: UIImage(named: imageName))
-				hud.mode = MBProgressHUDMode.CustomView
+				hud.mode = MBProgressHUDMode.customView
 			}
-			hud.userInteractionEnabled = false
+			hud.isUserInteractionEnabled = false
 			hud.show(true)
-			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(durationOfText(tips) * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) { [weak self]() -> Void in
+			DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(durationOfText(tips) * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) { [weak self]() -> Void in
 				hud?.hide(true)
 				self?.isShowing = false
 			}
 		}
 
-		if NSThread.isMainThread() {
+		if Thread.isMainThread {
 			show()
 		} else {
-			dispatch_async(dispatch_get_main_queue(), { () -> Void in
+			DispatchQueue.main.async(execute: { () -> Void in
 				show()
 			})
 		}
 	}
 
 	// MARK: 计算文本显示时间 有待优化
-	private func durationOfText(text: String) -> NSTimeInterval {
-		let readingLetterPerSecond: NSTimeInterval = 15
-		var duration = NSTimeInterval(text.characters.count) / readingLetterPerSecond
-		let minimum: NSTimeInterval = 0.35
+	fileprivate func durationOfText(_ text: String) -> TimeInterval {
+		let readingLetterPerSecond: TimeInterval = 15
+		var duration = TimeInterval(text.characters.count) / readingLetterPerSecond
+		let minimum: TimeInterval = 0.35
 		if duration < minimum {
 			duration = minimum
 		}
 		return duration
 	}
 
-	private func durationOfLoadingText(text: String) -> NSTimeInterval {
+	fileprivate func durationOfLoadingText(_ text: String) -> TimeInterval {
 		return 0.35
 	}
 
-	private func addTipsToQueue(item: (tip: String, image: String, y: Float)) {
+	fileprivate func addTipsToQueue(_ item: (tip: String, image: String, y: Float)) {
 
 		if tipsQueue.count == 0 {
 			tipsQueue.append(item)
@@ -238,14 +246,14 @@ final public class TipsManager {
 private extension String {
 
 	var tk_i18n: String {
-		if let path = NSBundle.mainBundle().pathForResource(TipsManager.shared.language, ofType: "lproj") {
-			let bundle = NSBundle(path: path)
-			if let str = bundle?.localizedStringForKey(self, value: nil, table: nil) {
+		if let path = Bundle.main.path(forResource: TipsManager.shared.language, ofType: "lproj") {
+			let bundle = Bundle(path: path)
+			if let str = bundle?.localizedString(forKey: self, value: nil, table: nil) {
 				return str
 			}
-		} else if let path = NSBundle.mainBundle().pathForResource("zh-Hans", ofType: "lproj") {
-			let bundle = NSBundle(path: path)
-			if let str = bundle?.localizedStringForKey(self, value: nil, table: nil) {
+		} else if let path = Bundle.main.path(forResource: "zh-Hans", ofType: "lproj") {
+			let bundle = Bundle(path: path)
+			if let str = bundle?.localizedString(forKey: self, value: nil, table: nil) {
 				return str
 			}
 		}
