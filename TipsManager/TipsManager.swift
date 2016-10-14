@@ -198,7 +198,7 @@ final public class TipsManager {
 			}
 			hud.isUserInteractionEnabled = false
 			hud.show(true)
-			DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(durationOfText(tips) * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) { [weak self]() -> Void in
+			DispatchQueue.main.asyncAfter(deadline: .now() + durationOfText(tips)) { [weak self]() -> Void in
 				hud?.hide(true)
 				self?.isShowing = false
 			}
