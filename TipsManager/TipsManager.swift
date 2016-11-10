@@ -51,7 +51,6 @@ final public class TipsManager {
 		didSet {
 			if !isShowing {
 				if let (tips, img, yoffset) = tipsQueue.first {
-					print(tipsQueue.first)
 					tipsQueue.removeFirst()
 					realShow(tips, img, yoffset)
 				}
