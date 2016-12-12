@@ -81,12 +81,12 @@ final public class TipsManager {
                     win.addSubview(hud)
                 }
 				hud.mode = MBProgressHUDMode.text
-				hud.labelText = tips.tk_i18n
+				hud.label.text = tips.tk_i18n
 				if imageName != "" {
 					hud.customView = UIImageView(image: UIImage(named: imageName))
 					hud.mode = MBProgressHUDMode.customView
 				}
-				hud.show(true)
+                hud.show(animated: true)
 				return hud
 			}
 
@@ -182,23 +182,22 @@ final public class TipsManager {
 	fileprivate func realShow(_ tips: String, _ imageName: String = "", _ offsetY: Float = 0) {
 		guard let win = UIApplication.shared.keyWindow else { return }
 		func show() {
-			MBProgressHUD.hideAllHUDs(for: win, animated: true)
 			var hud: MBProgressHUD! = MBProgressHUD.showAdded(to: win, animated: true)
             if hud == nil {
                 hud = MBProgressHUD()
                 win.addSubview(hud)
             }
 			hud.mode = MBProgressHUDMode.text
-			hud.detailsLabelText = tips.tk_i18n
-			hud.yOffset = offsetY == 0 ? 0 : (offsetY - 40)
+			hud.detailsLabel.text = tips.tk_i18n
+			hud.offset.y = CGFloat(offsetY == 0 ? 0 : (offsetY - 40))
 			if imageName != "" {
 				hud.customView = UIImageView(image: UIImage(named: imageName))
 				hud.mode = MBProgressHUDMode.customView
 			}
 			hud.isUserInteractionEnabled = false
-			hud.show(true)
+			hud.show(animated: true)
 			DispatchQueue.main.asyncAfter(deadline: .now() + durationOfText(tips)) { [weak self]() -> Void in
-				hud?.hide(true)
+				hud?.hide(animated: true)
 				self?.isShowing = false
 			}
 		}
