@@ -166,7 +166,7 @@ final public class TipsManager {
 			realShow(tips, type.rawValue, Float(mainScreenHeight / 2))
 		}
 	}
-
+    // MARK: - Private
 	fileprivate func showTipsWith(_ tips: String, _ type: PromotType) {
 
 		if isShowing {
