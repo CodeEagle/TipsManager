@@ -20,16 +20,14 @@ final public class TipsManager {
 
 	fileprivate static var _shared: TipsManager? = nil
 	public var language = "zh-Hans"
+    public var readingSpeed = 6
+    public var minimumTipsDuration: TimeInterval = 2
 	public static var shared: TipsManager {
-		if _shared == nil {
-			_shared = TipsManager()
-		}
+		if _shared == nil { _shared = TipsManager() }
 		return _shared!
 	}
 
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
+	deinit { NotificationCenter.default.removeObserver(self) }
 
 	fileprivate init() {
 		let center = NotificationCenter.default
@@ -213,17 +211,9 @@ final public class TipsManager {
 
 	// MARK: 计算文本显示时间 有待优化
 	fileprivate func durationOfText(_ text: String) -> TimeInterval {
-		let readingLetterPerSecond: TimeInterval = 15
-		var duration = TimeInterval(text.characters.count) / readingLetterPerSecond
-		let minimum: TimeInterval = 0.35
-		if duration < minimum {
-			duration = minimum
-		}
+		var duration = TimeInterval(text.characters.count / readingSpeed)
+		if duration < minimumTipsDuration { duration = minimumTipsDuration }
 		return duration
-	}
-
-	fileprivate func durationOfLoadingText(_ text: String) -> TimeInterval {
-		return 0.35
 	}
 
 	fileprivate func addTipsToQueue(_ item: (tip: String, image: String, y: Float)) {

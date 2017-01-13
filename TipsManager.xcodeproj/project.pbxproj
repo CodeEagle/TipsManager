@@ -18,7 +18,7 @@
 		166D84391CFF0E5000F5576A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		166D843F1CFF0E9400F5576A /* TipsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TipsManager.swift; sourceTree = "<group>"; };
 		1697A65E1DFED6F2007DFD91 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		16FF85191D02834F00D7C99B /* MBProgressHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MBProgressHUD.framework; path = Carthage/Build/iOS/MBProgressHUD.framework; sourceTree = "<group>"; };
+		16FF85191D02834F00D7C99B /* MBProgressHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MBProgressHUD.framework; path = ../Carthage/Build/iOS/MBProgressHUD.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,6 @@
 			isa = PBXGroup;
 			children = (
 				1697A65E1DFED6F2007DFD91 /* Cartfile */,
-				16FF85191D02834F00D7C99B /* MBProgressHUD.framework */,
 				166D84361CFF0E5000F5576A /* TipsManager */,
 				166D84351CFF0E5000F5576A /* Products */,
 			);
@@ -57,6 +56,7 @@
 				166D84371CFF0E5000F5576A /* TipsManager.h */,
 				166D843F1CFF0E9400F5576A /* TipsManager.swift */,
 				166D84391CFF0E5000F5576A /* Info.plist */,
+				16FF85191D02834F00D7C99B /* MBProgressHUD.framework */,
 			);
 			path = TipsManager;
 			sourceTree = "<group>";
